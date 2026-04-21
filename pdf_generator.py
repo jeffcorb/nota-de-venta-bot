@@ -95,7 +95,8 @@ def generate_pdf(venta: dict, config: dict) -> bytes:
     buffer  = io.BytesIO()
     page_w  = A4[0] - 3 * cm          # ancho útil
     numero  = venta.get("numero", 1)
-    moneda  = config.get("moneda", "USD")
+    _simbolos = {"PEN": "S/.", "USD": "US$", "EUR": "€", "ARS": "$"}
+    moneda  = _simbolos.get(config.get("moneda", "USD"), config.get("moneda", "USD"))
     fecha   = datetime.now().strftime("%d/%m/%Y")
     s       = _styles()
 
