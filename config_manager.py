@@ -1,11 +1,15 @@
 """Gestión de la configuración del negocio en JSON local."""
 
 import json
+import os
 from pathlib import Path
 
 
 class ConfigManager:
-    def __init__(self, config_path: str = "data/config.json"):
+    def __init__(self, config_path: str = None):
+        if config_path is None:
+            data_dir = os.environ.get("DATA_DIR", "data")
+            config_path = f"{data_dir}/config.json"
         self.config_file = Path(config_path)
         self.config_file.parent.mkdir(parents=True, exist_ok=True)
 
