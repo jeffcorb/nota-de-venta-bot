@@ -1,8 +1,11 @@
-"""Integración con Cloudinary para almacenar el logo del negocio."""
+"""Integración con Cloudinary para almacenar el logo y la configuración del negocio."""
 
+import json
 import os
 import cloudinary
+import cloudinary.api
 import cloudinary.uploader
+import requests
 
 
 class CloudinaryHelper:
@@ -33,3 +36,23 @@ class CloudinaryHelper:
             resource_type="image",
         )
         return result["secure_url"]
+
+    def upload_config(self, config: dict) -> None:
+        """Guarda la configuración del negocio en Cloudinary como JSON."""
+        config_bytes = json.dumps(config, ensure_ascii=False, indent=2).encode("utf-8")
+        cloudinary.uploader.upload(
+            config_bytes,
+            public_id="config",
+            folder="nota_venta",
+            overwrite=True,
+            resource_type="raw",
+        )
+
+    def download_config(self) -> dict | None:
+        """Descarga la configuración del negocio desde Cloudinary."""
+        try:
+            result = cloudinary.api.resource("nota_venta/config", resource_type="raw")
+            resp = requests.get(result["secure_url"], timeout=10)
+            return json.loads(resp.text)
+        except Exception:
+            return None
